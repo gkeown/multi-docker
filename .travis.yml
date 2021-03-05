@@ -1,10 +1,11 @@
-language: generic
 sudo: required
+language: generic
+
 services:
   - docker
 
 before_install:
-  - docker build -t gkeown03/react-test -f ./client/Dockerfile.dev ./
+  - docker build -t gkeown03/react-test -f ./client/Dockerfile.dev ./client
 
 script:
   - docker run -e CI=true gkeown03/react-test npm test
@@ -14,9 +15,9 @@ after_success:
   - docker build -t gkeown03/multi-nginx ./nginx
   - docker build -t gkeown03/multi-server ./server
   - docker build -t gkeown03/multi-worker ./worker
-  # login to the docker CLI - environment variables in Travis CI
+  # Log in to the docker CLI
   - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
-  # take images and add to dockerhub
+  # Take those images and push them to docker hub
   - docker push gkeown03/multi-client
   - docker push gkeown03/multi-nginx
   - docker push gkeown03/multi-server
